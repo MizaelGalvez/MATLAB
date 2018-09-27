@@ -1,6 +1,6 @@
 function [MatrizFrecuencias] = FuncionCrearTablaFrecuenciasPorValorUnico(Matriz,ValoresUnicos, DimencionTabla)
-
-MatrizInterna = zeros((DimencionTabla(1,1)-1),(DimencionTabla(1,2)+1));
+temp = size(ValoresUnicos);
+MatrizInterna = zeros((temp(1,1)),(DimencionTabla(1,2)+1));
 tam = size(ValoresUnicos());
 
 MatrizInterna(:,1) = ValoresUnicos();

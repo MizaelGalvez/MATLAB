@@ -17,16 +17,19 @@ Valor_Positivo = 4;
 Valor_Negativo = 2;
 Columna_Clase = 10;
 
-Datos = Train;
+DatosEntrenamiento = Train;
+DatosPrueba = Test;
 
-Apriori_Positivo = FuncionProbabilidadApriori(Datos, 10, Valor_Positivo);
-Apriori_Negativo = FuncionProbabilidadApriori(Datos, 10, Valor_Negativo);
+Valores_Unicos = unique(DatosEntrenamiento);
 
-Map_boleano = Datos(:,10)==Valor_Positivo;
-Casos_Positivos = Datos(Map_boleano,:);
+Apriori_Positivo = FuncionProbabilidadApriori(DatosEntrenamiento, 10, Valor_Positivo);
+Apriori_Negativo = FuncionProbabilidadApriori(DatosEntrenamiento, 10, Valor_Negativo);
 
-Map_boleano = Datos(:,10)==Valor_Negativo;
-Casos_Negativos = Datos(Map_boleano,:);
+Map_boleano = DatosEntrenamiento(:,10)==Valor_Positivo;
+Casos_Positivos = DatosEntrenamiento(Map_boleano,:);
+
+Map_boleano = DatosEntrenamiento(:,10)==Valor_Negativo;
+Casos_Negativos = DatosEntrenamiento(Map_boleano,:);
 %_________________________________________________________________________%
 
 %------------------- Creando las tablas de Frecuencia --------------------%
@@ -77,9 +80,9 @@ Temp = size(Casos_Negativos);
 
 %------------------- Creando las tablas de Frecuencia --------------------%
 
-Matriz_Frecuencias_Positivo = FuncionCrearTablaFrecuenciasPorValorUnico(Casos_Positivos, Positivo_Valores_unicos, size(Positivo_Matriz_Valores_por_Columnas));
+Matriz_Frecuencias_Positivo = FuncionCrearTablaFrecuenciasPorValorUnico(Casos_Positivos, Valores_Unicos, size(Positivo_Matriz_Valores_por_Columnas));
 
-Matriz_Frecuencias_Negativo = FuncionCrearTablaFrecuenciasPorValorUnico(Casos_Negativos, Negativo_Valores_unicos, size(Negativo_Matriz_Valores_por_Columnas));
+Matriz_Frecuencias_Negativo = FuncionCrearTablaFrecuenciasPorValorUnico(Casos_Negativos, Valores_Unicos, size(Negativo_Matriz_Valores_por_Columnas));
 
 %-------------------------Ejemplo del Resultado---------------------------%
 %
@@ -110,22 +113,16 @@ Matriz_Frecuencias_Negativo(:,11) = [];
 
 %----------------NORMALIZAR-----LAPLACE sin columna 1---------------------------%
 
-LAPLACE_Matriz_Frecuencias_Positivo = Matriz_Frecuencias_Positivo+1;
-LAPLACE_Matriz_Frecuencias_Negativo = Matriz_Frecuencias_Negativo+1;
-
-%Obteniendo la sumatoria por la columna para sacar los porcentages
-
-Total_Sumatoria_Columnas_Positivo = sum(LAPLACE_Matriz_Frecuencias_Positivo);
-Total_Sumatoria_Columnas_Positivo = Total_Sumatoria_Columnas_Positivo(1,1);
-Total_Sumatoria_Columnas_Negativo = sum(LAPLACE_Matriz_Frecuencias_Negativo);
-Total_Sumatoria_Columnas_Negativo = Total_Sumatoria_Columnas_Negativo(1,1);
+PORCENTAJE_Matriz_Frecuencias_Positivo = FuncionNormalizar(Matriz_Frecuencias_Positivo, Valores_Unicos);
+PORCENTAJE_Matriz_Frecuencias_Negativo = FuncionNormalizar(Matriz_Frecuencias_Negativo, Valores_Unicos);
 
 
-%-------Normalizado por entre Valor del Total
+%--------------------------------------------------------------------------------------------------------------%
+%--------------------------------------------------------------------------------------------------------------%
 
-PORCENTAJE_Matriz_Frecuencias_Positivo = LAPLACE_Matriz_Frecuencias_Positivo/Total_Sumatoria_Columnas_Negativo;
-PORCENTAJE_Matriz_Frecuencias_Negativo = LAPLACE_Matriz_Frecuencias_Negativo/Total_Sumatoria_Columnas_Negativo;
+MatrizProbabilidadesPositivo = FuncionProbabilidadTest(PORCENTAJE_Matriz_Frecuencias_Positivo, Apriori_Positivo, DatosPrueba);
+MatrizProbabilidadesNegativo = FuncionProbabilidadTest(PORCENTAJE_Matriz_Frecuencias_Negativo, Apriori_Negativo, DatosPrueba);
 
-PORCENTAJE_Matriz_Frecuencias_Positivo(:,1) = Positivo_Valores_unicos;
-PORCENTAJE_Matriz_Frecuencias_Negativo(:,1) = Negativo_Valores_unicos;
 
+MatrizTEST = FuncionCompararProbabilidad(DatosPrueba, MatrizProbabilidadesPositivo, MatrizProbabilidadesNegativo);
+Efectividad = (FuncionPorcentajeEfectividad(MatrizTEST)*100);
