@@ -20,16 +20,27 @@ Columna_Clase = 10;
 DatosEntrenamiento = Train;
 DatosPrueba = Test;
 
-Valores_Unicos = unique(DatosEntrenamiento);
+% Obteniendo los datos unicos de la tabla General para obtener absolutamente
+% todos los Valores Unicos 
+
+Valores_Unicos = unique(Casos);
 
 Apriori_Positivo = FuncionProbabilidadApriori(DatosEntrenamiento, 10, Valor_Positivo);
 Apriori_Negativo = FuncionProbabilidadApriori(DatosEntrenamiento, 10, Valor_Negativo);
+%_________________________________________________________________________%
 
+%Separando casos positivos de casos Negativos
 Map_boleano = DatosEntrenamiento(:,10)==Valor_Positivo;
 Casos_Positivos = DatosEntrenamiento(Map_boleano,:);
 
 Map_boleano = DatosEntrenamiento(:,10)==Valor_Negativo;
 Casos_Negativos = DatosEntrenamiento(Map_boleano,:);
+
+figure(1)
+plot(Casos_Positivos(:,:), 'o', 'color', 'green', 'MarkerFaceColor', 'green', 'MarkerSize', 6)
+
+figure(2)
+plot(Casos_Negativos(:,:), 'o', 'color', 'red', 'MarkerFaceColor', 'red', 'MarkerSize', 6)
 %_________________________________________________________________________%
 
 %------------------- Creando las tablas de Frecuencia --------------------%
@@ -125,4 +136,23 @@ MatrizProbabilidadesNegativo = FuncionProbabilidadTest(PORCENTAJE_Matriz_Frecuen
 
 
 MatrizTEST = FuncionCompararProbabilidad(DatosPrueba, MatrizProbabilidadesPositivo, MatrizProbabilidadesNegativo);
+
+%separando de la Matriz Total de TEST con ya asignada el resultado Positivo
+%o negativo a diferente matriz dependiendo el caso.
+
+Map_boleano = MatrizTEST(:,10)==Valor_Positivo;
+MatrizTEST_POSITIVO = MatrizTEST(Map_boleano,:);
+
+Map_boleano = MatrizTEST(:,10)==Valor_Negativo;
+MatrizTEST_NEGATIVO = MatrizTEST(Map_boleano,:);
+
+%Obteniendo la efectividad de cada Matriz, es indispensable que la
+%supocicion este como ultima columna y la clase en penultima
+
 Efectividad = (FuncionPorcentajeEfectividad(MatrizTEST)*100);
+Efectividad_POSITIVO = (FuncionPorcentajeEfectividad(MatrizTEST_POSITIVO)*100);
+Efectividad_NEGATIVO = (FuncionPorcentajeEfectividad(MatrizTEST_NEGATIVO)*100);
+
+
+
+
